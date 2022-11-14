@@ -1,4 +1,14 @@
-def arithmetic_arranger(problems, solutions=False) -> str:
+def largest_num_length(problems, equation):
+    return max(
+        len(problems[equation].split()[0]), len(problems[equation].split()[2])
+    )
+
+
+def operator(problems, equation):
+    return problems[equation].split()[1]
+
+
+def arithmetic_arranger(problems, solutions=False):
 
     # Error checking
     if len(problems) > 5:
@@ -13,8 +23,7 @@ def arithmetic_arranger(problems, solutions=False) -> str:
         if (len(problem.split()[0]) > 4) or (len(problem.split()[2]) > 4):
             return "Error: Numbers cannot be more than four digits."
 
-    # Conversion
-    # Each join method used is to create spaces and align each equation
+    # Variables
     spacer = "    "
     num1_row = ""
     num2_row = ""
@@ -23,92 +32,86 @@ def arithmetic_arranger(problems, solutions=False) -> str:
 
     # Creates the first row
     for i in range(len(problems)):
-        largest_num_length = max(
-            len(problems[i].split()[0]), len(problems[i].split()[2])
-        )
-
         # Calculates the spaces needed to be aligned
         num1 = (
             "".join(
                 " "
                 for i in range(
-                    len(problems[i].split()[0]), largest_num_length + 2
+                    len(problems[i].split()[0]),
+                    largest_num_length(problems, i) + 2,
                 )
             )
             + problems[i].split()[0]
         )
 
         # Adds the number to the row
-        if i == 0:
-            num1_row += num1
-        else:
+        if i != 0:
             num1_row += spacer + num1
+        else:
+            num1_row += num1
 
     # Creates the second row
     for i in range(len(problems)):
-        largest_num_length = max(
-            len(problems[i].split()[0]), len(problems[i].split()[2])
-        )
-        operator = problems[i].split()[1]
-
         # Calculates the spaces needed to be aligned
         num2 = (
-            operator
+            operator(problems, i)
             + "".join(
                 " "
                 for i in range(
-                    len(problems[i].split()[2]), largest_num_length + 1
+                    len(problems[i].split()[2]),
+                    largest_num_length(problems, i) + 1,
                 )
             )
             + problems[i].split()[2]
         )
-        # Adds the number with the operator to the row
-        if i == 0:
-            num2_row += num2
-        else:
+
+        # Adds the operator with the number to the row
+        if i != 0:
             num2_row += spacer + num2
+        else:
+            num2_row += num2
 
     # Creates the third row
     for i in range(len(problems)):
-        largest_num_length = max(
-            len(problems[i].split()[0]), len(problems[i].split()[2])
-        )
-
         # Calculates the spaces needed to be aligned
-        dashes = "".join("-" for i in range(largest_num_length + 2))
+        dashes = "".join(
+            "-" for i in range(largest_num_length(problems, i) + 2)
+        )
 
         # Adds the dashes to the row
-        if i == 0:
-            dashes_row += dashes
-        else:
+        if i != 0:
             dashes_row += spacer + dashes
-
-    # Creates the fourth row
-    for i in range(len(problems)):
-        largest_num_length = max(
-            len(problems[i].split()[0]), len(problems[i].split()[2])
-        )
-        operator = problems[i].split()[1]
-
-        # Calculates the answer
-        if operator == "-":
-            answer = int(problems[i].split()[0]) - int(problems[i].split()[2])
-        elif operator == "+":
-            answer = int(problems[i].split()[0]) + int(problems[i].split()[2])
-
-        # Calculates the spaces needed to be aligned
-        solution = "".join(
-            " " for i in range(len(str(answer)), largest_num_length + 2)
-        ) + str(answer)
-
-        # Adds the solution to the row
-        if i == 0:
-            solution_row += solution
         else:
-            solution_row += spacer + solution
+            dashes_row += dashes
 
     # Combines each row
     if solutions:
+        # Creates the fourth row
+        for i in range(len(problems)):
+            # Calculates the answer
+            if operator(problems, i) == "+":
+                answer = int(problems[i].split()[0]) + int(
+                    problems[i].split()[2]
+                )
+            else:
+                answer = int(problems[i].split()[0]) - int(
+                    problems[i].split()[2]
+                )
+
+            # Calculates the spaces needed to be aligned
+            solution = "".join(
+                " "
+                for i in range(
+                    len(str(answer)), largest_num_length(problems, i) + 2
+                )
+            ) + str(answer)
+
+            # Adds the solution to the row
+            if i != 0:
+                solution_row += spacer + solution
+            else:
+                solution_row += solution
+
         arranged_problems = (
             num1_row
             + "\n"
@@ -120,5 +123,4 @@ def arithmetic_arranger(problems, solutions=False) -> str:
         )
     else:
         arranged_problems = num1_row + "\n" + num2_row + "\n" + dashes_row
-
     return arranged_problems
